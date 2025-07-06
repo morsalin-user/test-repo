@@ -10,10 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import Link from "next/link"
 import { Filter, Search, SlidersHorizontal } from "lucide-react"
 
-export default function ProductsPage() {
+export default function BooksPage() {
   const searchParams = useSearchParams()
-  const [products, setProducts] = useState([])
-  const [filteredProducts, setFilteredProducts] = useState([])
+  const [books, setBooks] = useState([])
+  const [filteredBooks, setFilteredBooks] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
@@ -23,56 +23,56 @@ export default function ProductsPage() {
   const [showFilters, setShowFilters] = useState(false)
 
   useEffect(() => {
-    fetchProducts()
+    fetchBooks()
   }, [])
 
   useEffect(() => {
-    filterAndSortProducts()
-  }, [products, searchTerm, selectedCategory, selectedCondition, sortBy, priceRange])
+    filterAndSortBooks()
+  }, [books, searchTerm, selectedCategory, selectedCondition, sortBy, priceRange])
 
-  const fetchProducts = async () => {
+  const fetchBooks = async () => {
     try {
-      const response = await fetch("/api/products")
+      const response = await fetch("/api/books")
       if (response.ok) {
         const data = await response.json()
-        setProducts(data)
+        setBooks(data)
       }
     } catch (error) {
-      console.error("Failed to fetch products:", error)
+      console.error("Failed to fetch books:", error)
     } finally {
       setLoading(false)
     }
   }
 
-  const filterAndSortProducts = () => {
-    let filtered = [...products]
+  const filterAndSortBooks = () => {
+    let filtered = [...books]
 
     // Search filter
     if (searchTerm) {
       filtered = filtered.filter(
-        (product) =>
-          product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.category.toLowerCase().includes(searchTerm.toLowerCase()),
+        (book) =>
+          book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          book.category.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     }
 
     // Category filter
     if (selectedCategory !== "all") {
-      filtered = filtered.filter((product) => product.category.toLowerCase() === selectedCategory.toLowerCase())
+      filtered = filtered.filter((book) => book.category.toLowerCase() === selectedCategory.toLowerCase())
     }
 
     // Condition filter
     if (selectedCondition !== "all") {
-      filtered = filtered.filter((product) => product.condition === selectedCondition)
+      filtered = filtered.filter((book) => book.condition === selectedCondition)
     }
 
     // Price range filter
     if (priceRange.min) {
-      filtered = filtered.filter((product) => product.price >= Number.parseFloat(priceRange.min))
+      filtered = filtered.filter((book) => book.price >= Number.parseFloat(priceRange.min))
     }
     if (priceRange.max) {
-      filtered = filtered.filter((product) => product.price <= Number.parseFloat(priceRange.max))
+      filtered = filtered.filter((book) => book.price <= Number.parseFloat(priceRange.max))
     }
 
     // Sorting
@@ -92,11 +92,11 @@ export default function ProductsPage() {
         break
     }
 
-    setFilteredProducts(filtered)
+    setFilteredBooks(filtered)
   }
 
   const getUniqueCategories = () => {
-    const categories = products.map((product) => product.category)
+    const categories = books.map((book) => book.category)
     return [...new Set(categories)]
   }
 
@@ -126,7 +126,7 @@ export default function ProductsPage() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-purple-400 mb-4">
-            {selectedCondition === "new" ? "New Books" : selectedCondition === "used" ? "Used Books" : "Our Products"}
+            {selectedCondition === "new" ? "New Books" : selectedCondition === "used" ? "Used Books" : "Our Books"}
           </h1>
 
           {/* Mobile Filter/Sort Buttons */}
@@ -274,22 +274,22 @@ export default function ProductsPage() {
           )}
         </div>
 
-        {/* Products Grid */}
-        {filteredProducts.length === 0 ? (
+        {/* Books Grid */}
+        {filteredBooks.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-400 text-lg">No products found matching your criteria.</p>
+            <p className="text-gray-400 text-lg">No books found matching your criteria.</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {filteredProducts.map((product) => (
-              <Link key={product._id} href={`/product/${product._id}`}>
+            {filteredBooks.map((book) => (
+              <Link key={book._id} href={`/book/${book._id}`}>
                 <Card className="bg-gray-800 border-gray-700 hover:bg-gray-750 transition-colors cursor-pointer group">
                   <CardContent className="p-3">
                     <div className="aspect-[3/4] bg-gray-700 rounded-lg mb-3 overflow-hidden">
-                      {product.images && product.images.length > 0 ? (
+                      {book.images && book.images.length > 0 ? (
                         <img
-                          src={product.images[0] || "/placeholder.svg"}
-                          alt={product.title}
+                          src={book.images[0] || "/placeholder.svg"}
+                          alt={book.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                         />
                       ) : (
@@ -299,15 +299,13 @@ export default function ProductsPage() {
                       )}
                     </div>
                     <div className="space-y-2">
-                      <div className="text-purple-400 font-bold text-lg">${product.price}</div>
-                      <h3 className="text-white text-sm font-medium leading-tight">
-                        {truncateTitle(product.title, 60)}
-                      </h3>
+                      <div className="text-purple-400 font-bold text-lg">${book.price}</div>
+                      <h3 className="text-white text-sm font-medium leading-tight">{truncateTitle(book.title, 60)}</h3>
                       <Badge
-                        variant={product.condition === "new" ? "default" : "secondary"}
-                        className={product.condition === "new" ? "bg-green-600 text-white" : "bg-yellow-600 text-white"}
+                        variant={book.condition === "new" ? "default" : "secondary"}
+                        className={book.condition === "new" ? "bg-green-600 text-white" : "bg-yellow-600 text-white"}
                       >
-                        {product.condition.toUpperCase()}
+                        {book.condition.toUpperCase()}
                       </Badge>
                     </div>
                   </CardContent>

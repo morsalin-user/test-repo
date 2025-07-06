@@ -5,8 +5,9 @@ import { verifyToken } from "@/lib/auth"
 
 export async function GET(request, { params }) {
   try {
+    const { id } = await params
     await connectDB()
-    const blog = await Blog.findById(params.id)
+    const blog = await Blog.findById(id)
 
     if (!blog) {
       return NextResponse.json({ message: "Blog not found" }, { status: 404 })
@@ -26,10 +27,11 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     const blogData = await request.json()
     await connectDB()
 
-    const blog = await Blog.findByIdAndUpdate(params.id, blogData, { new: true })
+    const blog = await Blog.findByIdAndUpdate(id, blogData, { new: true })
 
     if (!blog) {
       return NextResponse.json({ message: "Blog not found" }, { status: 404 })
@@ -49,8 +51,9 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     await connectDB()
-    const blog = await Blog.findByIdAndDelete(params.id)
+    const blog = await Blog.findByIdAndDelete(id)
 
     if (!blog) {
       return NextResponse.json({ message: "Blog not found" }, { status: 404 })

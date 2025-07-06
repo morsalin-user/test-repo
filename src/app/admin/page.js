@@ -4,9 +4,10 @@ import { useEffect } from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import { useRouter } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import ProductManagement from "@/components/admin/ProductManagement"
+import ProductManagement from "@/components/admin/BookManagement"
 import BlogManagement from "@/components/admin/BlogManagement"
 import OrderManagement from "@/components/admin/OrderManagement"
+import BookSubmissionManagement from "@/components/admin/BookSubmissionManagement"
 
 export default function AdminPage() {
   const { user, loading } = useAuth()
@@ -28,13 +29,22 @@ export default function AdminPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-8 text-purple-900">Admin Dashboard</h1>
 
       <Tabs defaultValue="products" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="products">Products</TabsTrigger>
-          <TabsTrigger value="blogs">Blogs</TabsTrigger>
-          <TabsTrigger value="orders">Orders</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 bg-purple-100">
+          <TabsTrigger value="products" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+            Products
+          </TabsTrigger>
+          <TabsTrigger value="blogs" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+            Blogs & News
+          </TabsTrigger>
+          <TabsTrigger value="orders" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+            Orders
+          </TabsTrigger>
+          <TabsTrigger value="submissions" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+            Book Submissions
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="products">
@@ -47,6 +57,10 @@ export default function AdminPage() {
 
         <TabsContent value="orders">
           <OrderManagement />
+        </TabsContent>
+
+        <TabsContent value="submissions">
+          <BookSubmissionManagement />
         </TabsContent>
       </Tabs>
     </div>

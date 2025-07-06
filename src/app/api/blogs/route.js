@@ -3,10 +3,19 @@ import { connectDB } from "@/lib/mongodb"
 import Blog from "@/models/Blog"
 import { verifyToken } from "@/lib/auth"
 
-export async function GET() {
+export async function GET(request) {
   try {
     await connectDB()
-    const blogs = await Blog.find({}).sort({ createdAt: -1 })
+
+    const { searchParams } = new URL(request.url)
+    const type = searchParams.get("type")
+
+    const query = {}
+    if (type) {
+      query.type = type
+    }
+
+    const blogs = await Blog.find(query).sort({ createdAt: -1 })
     return NextResponse.json(blogs)
   } catch (error) {
     console.error("Error fetching blogs:", error)
@@ -24,7 +33,10 @@ export async function POST(request) {
     const blogData = await request.json()
     await connectDB()
 
-    const blog = await Blog.create(blogData)
+    const blog = await Blog.create({
+      ...blogData,
+      type: blogData.type || "blog",
+    })
     return NextResponse.json(blog, { status: 201 })
   } catch (error) {
     console.error("Error creating blog:", error)

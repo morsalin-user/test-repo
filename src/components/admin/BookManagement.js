@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { Trash2, Edit, X, Upload } from "lucide-react"
-// import ImageUploadTest from "./ImageUploadTest"
+import ImageUploadTest from "./ImageUploadTest"
 
 export default function ProductManagement() {
   const [products, setProducts] = useState([])
@@ -236,7 +236,7 @@ export default function ProductManagement() {
 
   return (
     <div className="space-y-6">
-      {/* <ImageUploadTest /> */}
+      <ImageUploadTest />
       <Card>
         <CardHeader>
           <CardTitle>{editingProduct ? "Edit Product" : "Add New Product"}</CardTitle>

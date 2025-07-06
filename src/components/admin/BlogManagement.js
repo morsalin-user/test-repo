@@ -4,10 +4,11 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { Trash2, Edit } from "lucide-react"
+import RichTextEditor from "./RichTextEditor"
 
 export default function BlogManagement() {
   const [blogs, setBlogs] = useState([])
@@ -16,6 +17,7 @@ export default function BlogManagement() {
     title: "",
     content: "",
     excerpt: "",
+    type: "blog", // blog or news
   })
   const { toast } = useToast()
 
@@ -54,12 +56,12 @@ export default function BlogManagement() {
       if (response.ok) {
         toast({
           title: "Success",
-          description: `Blog ${editingBlog ? "updated" : "created"} successfully!`,
+          description: `${formData.type === "blog" ? "Blog" : "News"} ${editingBlog ? "updated" : "created"} successfully!`,
         })
         resetForm()
         fetchBlogs()
       } else {
-        throw new Error("Failed to save blog")
+        throw new Error("Failed to save content")
       }
     } catch (error) {
       toast({
@@ -76,11 +78,12 @@ export default function BlogManagement() {
       title: blog.title,
       content: blog.content,
       excerpt: blog.excerpt || "",
+      type: blog.type || "blog",
     })
   }
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this blog?")) return
+    if (!confirm("Are you sure you want to delete this content?")) return
 
     try {
       const response = await fetch(`/api/blogs/${id}`, {
@@ -93,14 +96,14 @@ export default function BlogManagement() {
       if (response.ok) {
         toast({
           title: "Success",
-          description: "Blog deleted successfully!",
+          description: "Content deleted successfully!",
         })
         fetchBlogs()
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete blog",
+        description: "Failed to delete content",
         variant: "destructive",
       })
     }
@@ -112,6 +115,7 @@ export default function BlogManagement() {
       title: "",
       content: "",
       excerpt: "",
+      type: "blog",
     })
   }
 
@@ -119,40 +123,54 @@ export default function BlogManagement() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>{editingBlog ? "Edit Blog" : "Add New Blog"}</CardTitle>
+          <CardTitle className="text-purple-900">{editingBlog ? "Edit Content" : "Create New Content"}</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                required
-              />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  required
+                  className="text-lg"
+                />
+              </div>
+              <div>
+                <Label htmlFor="type">Content Type</Label>
+                <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="blog">Blog Post</SelectItem>
+                    <SelectItem value="news">News Article</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
+
             <div>
               <Label htmlFor="excerpt">Excerpt (Optional)</Label>
-              <Textarea
+              <Input
                 id="excerpt"
                 value={formData.excerpt}
                 onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                placeholder="Brief description of the blog post..."
+                placeholder="Brief description..."
               />
             </div>
+
             <div>
               <Label htmlFor="content">Content</Label>
-              <Textarea
-                id="content"
-                value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                required
-                rows={10}
-              />
+              <RichTextEditor value={formData.content} onChange={(content) => setFormData({ ...formData, content })} />
             </div>
+
             <div className="flex gap-2">
-              <Button type="submit">{editingBlog ? "Update Blog" : "Add Blog"}</Button>
+              <Button type="submit" className="bg-purple-600 hover:bg-purple-700">
+                {editingBlog ? "Update" : "Publish"} {formData.type === "blog" ? "Blog" : "News"}
+              </Button>
               {editingBlog && (
                 <Button type="button" variant="outline" onClick={resetForm}>
                   Cancel
@@ -165,15 +183,25 @@ export default function BlogManagement() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Blogs</CardTitle>
+          <CardTitle className="text-purple-900">All Content</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {blogs.map((blog) => (
-              <div key={blog._id} className="flex items-center justify-between p-4 border rounded">
+              <div key={blog._id} className="flex items-center justify-between p-4 border border-purple-200 rounded">
                 <div>
-                  <h3 className="font-semibold">{blog.title}</h3>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold text-purple-900">{blog.title}</h3>
+                    <span
+                      className={`px-2 py-1 text-xs rounded ${
+                        blog.type === "news" ? "bg-red-100 text-red-800" : "bg-blue-100 text-blue-800"
+                      }`}
+                    >
+                      {blog.type === "news" ? "NEWS" : "BLOG"}
+                    </span>
+                  </div>
                   <p className="text-sm text-gray-600">{new Date(blog.createdAt).toLocaleDateString()}</p>
+                  {blog.excerpt && <p className="text-sm text-gray-500 mt-1">{blog.excerpt}</p>}
                 </div>
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" onClick={() => handleEdit(blog)}>

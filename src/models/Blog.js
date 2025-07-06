@@ -13,6 +13,11 @@ const BlogSchema = new mongoose.Schema(
     excerpt: {
       type: String,
     },
+    type: {
+      type: String,
+      enum: ["blog", "news"],
+      default: "blog",
+    },
   },
   {
     timestamps: true,
