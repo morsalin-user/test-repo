@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useSearchParams } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -14,13 +14,7 @@ export default function SuccessPage() {
   const [orderData, setOrderData] = useState(null)
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    if (sessionId) {
-      verifyPayment()
-    }
-  }, [sessionId])
-
-  const verifyPayment = async () => {
+  const verifyPayment = useCallback(async () => {
     try {
       const response = await fetch("/api/verify-payment", {
         method: "POST",
@@ -42,7 +36,13 @@ export default function SuccessPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [sessionId])
+
+  useEffect(() => {
+    if (sessionId) {
+      verifyPayment()
+    }
+  }, [sessionId, verifyPayment])
 
   if (loading) {
     return (

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import Link from "next/link"
 import { Filter, Search, SlidersHorizontal } from "lucide-react"
 
-export default function ProductsPage() {
+// Separate the component that uses useSearchParams
+function ProductsContent() {
   const searchParams = useSearchParams()
   const [products, setProducts] = useState([])
   const [filteredProducts, setFilteredProducts] = useState([])
@@ -318,5 +319,41 @@ export default function ProductsPage() {
         )}
       </div>
     </div>
+  )
+}
+
+// Loading fallback component
+function ProductsLoading() {
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+      <div className="container mx-auto px-4 py-6">
+        <div className="mb-6">
+          <div className="h-8 bg-gray-800 rounded w-48 mb-4 animate-pulse"></div>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-10 bg-gray-800 rounded animate-pulse"></div>
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {[...Array(10)].map((_, i) => (
+            <div key={i} className="animate-pulse">
+              <div className="bg-gray-800 aspect-[3/4] rounded-lg mb-3"></div>
+              <div className="h-4 bg-gray-800 rounded mb-2"></div>
+              <div className="h-4 bg-gray-800 rounded w-2/3"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Main component with Suspense boundary
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<ProductsLoading />}>
+      <ProductsContent />
+    </Suspense>
   )
 }

@@ -1,23 +1,79 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { BookOpen } from "lucide-react"
 
-async function getBlogs() {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/blogs?type=blog`, {
-      cache: "no-store",
-    })
-    if (!response.ok) return []
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to fetch blogs:", error)
-    return []
-  }
-}
+export default function BlogsPage() {
+  const [blogs, setBlogs] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-export default async function BlogsPage() {
-  const blogs = await getBlogs()
+  useEffect(() => {
+    async function fetchBlogs() {
+      try {
+        setLoading(true)
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        const response = await fetch(`${baseUrl}/api/blogs?type=blog`, {
+          cache: "no-store",
+        })
+        
+        if (!response.ok) {
+          setBlogs([])
+          return
+        }
+        
+        const blogsData = await response.json()
+        setBlogs(blogsData)
+      } catch (error) {
+        console.error("Failed to fetch blogs:", error)
+        setError(error.message)
+        setBlogs([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchBlogs()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-purple-900 mb-4">Legal Insights & Blog Posts</h1>
+          <p className="text-gray-600">
+            Explore our collection of legal insights, professional articles, and expert commentary.
+          </p>
+        </div>
+        
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading blog posts...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-purple-900 mb-4">Legal Insights & Blog Posts</h1>
+          <p className="text-gray-600">
+            Explore our collection of legal insights, professional articles, and expert commentary.
+          </p>
+        </div>
+        
+        <div className="text-center py-12">
+          <BookOpen className="h-16 w-16 text-red-400 mx-auto mb-4" />
+          <p className="text-red-600 text-lg">Error loading blog posts: {error}</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

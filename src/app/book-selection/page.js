@@ -66,7 +66,7 @@ export default function BookSelectionPage() {
         </div>
 
         <div className="text-center mt-12">
-          <Link href="/products">
+          <Link href="/books">
             <Button
               variant="outline"
               className="border-white text-white hover:bg-white hover:text-purple-900 bg-transparent"

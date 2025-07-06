@@ -1,23 +1,75 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Calendar, Clock } from "lucide-react"
 
-async function getNews() {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/blogs?type=news`, {
-      cache: "no-store",
-    })
-    if (!response.ok) return []
-    return await response.json()
-  } catch (error) {
-    console.error("Failed to fetch news:", error)
-    return []
-  }
-}
+export default function NewsPage() {
+  const [news, setNews] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-export default async function NewsPage() {
-  const news = await getNews()
+  useEffect(() => {
+    async function fetchNews() {
+      try {
+        setLoading(true)
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+        const response = await fetch(`${baseUrl}/api/blogs?type=news`, {
+          cache: "no-store",
+        })
+        
+        if (!response.ok) {
+          setNews([])
+          return
+        }
+        
+        const newsData = await response.json()
+        setNews(newsData)
+      } catch (error) {
+        console.error("Failed to fetch news:", error)
+        setError(error.message)
+        setNews([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchNews()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-purple-900 mb-4">Legal News & Updates</h1>
+          <p className="text-gray-600">Stay informed with the latest legal news, updates, and important announcements.</p>
+        </div>
+        
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading news articles...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-purple-900 mb-4">Legal News & Updates</h1>
+          <p className="text-gray-600">Stay informed with the latest legal news, updates, and important announcements.</p>
+        </div>
+        
+        <div className="text-center py-12">
+          <Clock className="h-16 w-16 text-red-400 mx-auto mb-4" />
+          <p className="text-red-600 text-lg">Error loading news articles: {error}</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
