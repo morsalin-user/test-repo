@@ -12,7 +12,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-center mb-4">
               <Gavel className="h-8 w-8 text-yellow-400 mr-3" />
-              <p className="text-lg italic text-yellow-400 font-medium">"Let the Lawyers be aware"</p>
+              <p className="text-lg italic text-yellow-400 font-medium">&quot;Let the Lawyers be aware&quot;</p>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
               Your Premier Destination for
@@ -101,7 +101,7 @@ export default function Home() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-purple-900 mb-4">Why Choose Law Bookstore?</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              We're committed to providing legal professionals and students with the highest quality resources and
+              We&apos;re committed to providing legal professionals and students with the highest quality resources and
               service.
             </p>
           </div>

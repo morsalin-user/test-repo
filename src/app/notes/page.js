@@ -133,7 +133,7 @@ export default function NotesPage() {
         </CardHeader>
         <CardContent>
           <p className="text-gray-700 mb-4">
-            If you have any questions about our policies, shipping, or need assistance with your order, please don't
+            If you have any questions about our policies, shipping, or need assistance with your order, please don&apos;t
             hesitate to contact us.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">

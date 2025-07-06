@@ -140,7 +140,7 @@ export default function SellBooksPage() {
               <CardTitle className="text-lg">2. We Inspect</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600">Our experts review your submission and assess the book's value</p>
+              <p className="text-sm text-gray-600">Our experts review your submission and assess the book&apos;s value</p>
             </CardContent>
           </Card>
 
@@ -357,14 +357,14 @@ export default function SellBooksPage() {
             <div className="space-y-4 text-gray-600">
               <p>
                 <strong>1. Review Process:</strong> Our team will review your submission within 24-48 hours and assess
-                the book's condition and market value.
+                the book&apos;s condition and market value.
               </p>
               <p>
-                <strong>2. Offer:</strong> We'll send you a fair offer based on the book's condition, demand, and
+                <strong>2. Offer:</strong> We&apos;ll send you a fair offer based on the book&apos;s condition, demand, and
                 current market prices.
               </p>
               <p>
-                <strong>3. Acceptance:</strong> If you accept our offer, we'll arrange for book pickup or provide
+                <strong>3. Acceptance:</strong> If you accept our offer, we&apos;ll arrange for book pickup or provide
                 shipping instructions.
               </p>
               <p>
